@@ -1,0 +1,7 @@
+#ifndef WLAN_CREDENTIALS_H_
+#define WLAN_CREDENTIALS_H_
+
+char* WLAN_SSID = "SSID";
+char* WLAN_PASSWORD = "PASSWORD";
+
+#endif
