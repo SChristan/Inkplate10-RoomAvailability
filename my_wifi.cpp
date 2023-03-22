@@ -1,10 +1,24 @@
 #include "my_wifi.h"
 #include <WiFi.h>
+#include <esp_wpa2.h>
 #include <stdint.h>
+
+MyWiFi::MyWiFi(Inkplate& display, char* wlan_ssid, char* wlan_identity, char* wlan_username, char* wlan_password)
+  : display_{ display },
+    wlan_with_wpa2_{ true },
+    wlan_ssid_{ wlan_ssid },
+    wlan_identity_{ wlan_identity },
+    wlan_username_{ wlan_username },
+    wlan_password_{ wlan_password },
+    text_size_{ 3 } {
+}
 
 MyWiFi::MyWiFi(Inkplate& display, char* wlan_ssid, char* wlan_password)
   : display_{ display },
+    wlan_with_wpa2_{ false },
     wlan_ssid_{ wlan_ssid },
+    wlan_identity_{ },
+    wlan_username_{ },
     wlan_password_{ wlan_password },
     text_size_{ 3 } {
 }
@@ -16,14 +30,19 @@ void MyWiFi::connect() {
   display_.display();
 
   WiFi.mode(WIFI_MODE_STA);
-  WiFi.begin(wlan_ssid_, wlan_password_);
+  
+  if (wlan_with_wpa2_) {
+    WiFi.begin(wlan_ssid_, WPA2_AUTH_PEAP, wlan_identity_, wlan_username_, wlan_password_);
+  } else {
+    WiFi.begin(wlan_ssid_, wlan_password_);
+  }
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     display_.print('.');
     display_.partialUpdate();
   }
-  display_.println("\nConnected to " + String(wlan_ssid_) + "!");
+  display_.print("\nConnected to " + String(wlan_ssid_) + " with IP: " + WiFi.localIP().toString());
   display_.partialUpdate();
 }
 
