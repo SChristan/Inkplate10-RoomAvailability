@@ -12,6 +12,7 @@ public:
   void drawTimesAndDays();
   bool drawData();
   bool compareTimes(const char* time, const char* startTime);
+  struct tm addDaysToTM(struct tm* time_info, uint8_t days_to_add);
 
 private:
   Inkplate& display_;

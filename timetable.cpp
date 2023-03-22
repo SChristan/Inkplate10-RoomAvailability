@@ -40,7 +40,8 @@ void Timetable::drawBackground() {
   display_.setCursor(display_.width() / 2 - int16_t(strlen(headline_1) * pixel_width_letter_ * text_size_headline_ / 2), 60);
   display_.println(headline_1);
 
-  String headline_2_str = String(time_info_monday_->tm_mday) + "." + String(time_info_monday_->tm_mon + 1) + "." + String(time_info_monday_->tm_year + 1900) + " - " + String(time_info_monday_->tm_mday + day_number_ - 1) + "." + String(time_info_monday_->tm_mon + 1) + "." + String(time_info_monday_->tm_year + 1900);
+  struct tm time = addDaysToTM(time_info_monday_, day_number_ - 1);
+  String headline_2_str = String(time_info_monday_->tm_mday) + "." + String(time_info_monday_->tm_mon + 1) + "." + String(time_info_monday_->tm_year + 1900) + " - " + String(time.tm_mday) + "." + String(time.tm_mon + 1) + "." + String(time.tm_year + 1900);
   const char* headline_2 = headline_2_str.c_str();
   display_.setTextSize(text_size_);
   display_.setCursor(display_.width() / 2 - int16_t(strlen(headline_2) * pixel_width_letter_ * text_size_ / 2), display_.getCursorY() + 10);
@@ -74,24 +75,11 @@ void Timetable::drawTimesAndDays() {
   uint16_t x_days_position = display_margin_ + column_width_;
   uint16_t y_days_position = display_.height() - display_margin_ - time_number_ * row_height_ - uint16_t((row_height_head_ / 2) + (pixel_height_letter_ * text_size_ / 2));
   for (uint8_t i = 0; i < day_number_; i++) {
-    String day_str = String(days_[i]) + " " + String(time_info_monday_->tm_mday + i) + "." + String(time_info_monday_->tm_mon + 1) + ".";
+    struct tm time = addDaysToTM(time_info_monday_, i);
+    String day_str = String(days_[i]) + " " + String(time.tm_mday) + "." + String(time.tm_mon + 1) + ".";
     const char* day = day_str.c_str();
     display_.setCursor(x_days_position + i * column_width_ + int16_t((column_width_ / 2) - (strlen(day) * pixel_width_letter_ * text_size_ / 2)), y_days_position);
     display_.print(day);
-  }
-}
-
-bool Timetable::compareTimes(const char* time, const char* startTime) {
-  if (time[0] == '0') {
-    if (time[1] == startTime[0] && time[3] == startTime[1] && time[4] == startTime[2]) {
-      return true;
-    } else {
-      return false;
-    }
-  } else if (time[0] == startTime[0] && time[1] == startTime[1] && time[3] == startTime[2] && time[4] == startTime[3]) {
-    return true;
-  } else {
-    return false;
   }
 }
 
@@ -157,4 +145,26 @@ bool Timetable::drawData() {
     }
     return true;
   }
+}
+
+bool Timetable::compareTimes(const char* time, const char* startTime) {
+  if (time[0] == '0') {
+    if (time[1] == startTime[0] && time[3] == startTime[1] && time[4] == startTime[2]) {
+      return true;
+    } else {
+      return false;
+    }
+  } else if (time[0] == startTime[0] && time[1] == startTime[1] && time[3] == startTime[2] && time[4] == startTime[3]) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+struct tm Timetable::addDaysToTM(struct tm* time_info, uint8_t days_to_add) {
+  time_t epochs = mktime(time_info);
+  struct tm time = *localtime(&epochs);
+  time.tm_mday += days_to_add;
+  mktime(&time);
+  return time;
 }
