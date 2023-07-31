@@ -116,14 +116,14 @@ void performUpdate(time_t time_epoch) {
   static bool wifi_is_connected = false;
   if (!wifi_is_connected) {
     display.clearDisplay();
-    //MyWiFi wifi(display, WLAN_SSID_WPA2, WLAN_IDENTITY_WPA2, WLAN_USERNAME_WPA2, WLAN_PASSWORD_WPA2);
-    MyWiFi wifi(display, WLAN_SSID, WLAN_PASSWORD);
+    MyWiFi wifi(display, WLAN_SSID_WPA2, WLAN_IDENTITY_WPA2, WLAN_USERNAME_WPA2, WLAN_PASSWORD_WPA2);
+    //MyWiFi wifi(display, WLAN_SSID, WLAN_PASSWORD);
     wifi.connect();
     wifi_is_connected = true;
   }
   display.clearDisplay();
 
-  Timetable timetable(display, 457, time_epoch);  // 457 663
+  Timetable timetable(display, 460, time_epoch);  //  S-132 = 663 | S101 = 457 | S103 = 460
   timetable.drawBackground();
   timetable.drawTimesAndDays();
   bool data_loaded_successfully = timetable.drawData();
