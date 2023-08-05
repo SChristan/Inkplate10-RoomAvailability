@@ -162,6 +162,8 @@ void performUpdate(time_t time_epoch) {
 
   // Creating the Timetable object for the specified room ID and the specified time.
   Timetable timetable(display, 460, time_epoch);  //  Room IDs: S-132 = 663 | S101 = 457 | S103 = 460
+  timetable.drawBackground();
+  timetable.drawTimesAndDays();
   bool data_loaded_successfully = timetable.drawData();
   // Check if the data from WebUntis were loaded successfully
   if (!data_loaded_successfully) {
@@ -170,7 +172,5 @@ void performUpdate(time_t time_epoch) {
     display.setCursor(5, 5);
     display.println("Der Raumbelegungsplan konnte nicht geladen werden, bitte versuchen Sie es erneut.");
   }
-  timetable.drawBackground();
-  timetable.drawTimesAndDays();
   display.display();
 }
