@@ -67,7 +67,7 @@ void Timetable::drawBackground() {
   }
 
   // Draw columns of table
-  uint16_t x_column_position = display_margin_ + column_width_;
+  uint16_t x_column_position = display_margin_ + column_width_head_;
   uint16_t y_column_position = display_.height() - display_margin_ - time_number_ * row_height_ - row_height_head_;
   for (uint8_t i = 0; i < day_number_; i++) {
     display_.drawThickLine(x_column_position + i * column_width_, y_column_position, x_column_position + i * column_width_, display_.height() - display_margin_, BLACK, line_thickness_);
@@ -87,13 +87,13 @@ void Timetable::drawTimesAndDays() {
   // Loop with an iteration for each time
   for (uint8_t i = 0; i < time_number_; i++) {
   // Sets the cursor on the display for the times, the horizontal position is calculated to center the text
-    display_.setCursor(display_margin_ + int16_t((column_width_ / 2) - (strlen(times_[i]) * pixel_width_letter_ * text_size_ / 2)), y_times_position + i * row_height_);
+    display_.setCursor(display_margin_ + int16_t((column_width_head_ / 2) - (strlen(times_[i]) * pixel_width_letter_ * text_size_ / 2)), y_times_position + i * row_height_);
     display_.print(times_[i]);
   }
 
   // Draw days
   // Offset of the first normal column without the head column
-  uint16_t x_days_position = display_margin_ + column_width_;
+  uint16_t x_days_position = display_margin_ + column_width_head_;
   // Calculation of the vertical position of the days, centering in the vertical
   uint16_t y_days_position = display_.height() - display_margin_ - time_number_ * row_height_ - uint16_t((row_height_head_ / 2) + (pixel_height_letter_ * text_size_ / 2));
   // Loop with an iteration for each day
@@ -134,7 +134,7 @@ bool Timetable::drawData() {
     return false;
   } else {
     uint8_t row_index = 0;                                                                        // Indicates the current row
-    uint16_t x_position = display_margin_ + column_width_;                                        // Offset of the first normal column without the head column
+    uint16_t x_position = display_margin_ + column_width_head_;                                   // Offset of the first normal column without the head column
     uint16_t y_position = display_.height() - display_margin_ - time_number_ * row_height_;       // Offset of the first normal row without the head row
 
     // Iterating through the whole table
