@@ -19,6 +19,7 @@
 * Global definitions
 **********************************************************/
 #define TIME_TO_RELEASE_TOUCHPAD 1        // Time ESP32 will go to sleep before resetting to current week after Touchpad action (in seconds)
+#define WIFI_WITH_WPA2_NOT                // Selects the constructor for the MyWiFi object with WPA2 if "WIFI_WITH_WPA2" is defined
 
 Inkplate display(INKPLATE_1BIT);          // Set the bit space for the color of the display
 
@@ -149,8 +150,11 @@ void performUpdate(time_t time_epoch) {
   if (!wifi_is_connected) {
     display.clearDisplay();
     // Creating the MyWiFi object with or without WPA2.
-    //MyWiFi wifi(display, WLAN_SSID_WPA2, WLAN_IDENTITY_WPA2, WLAN_USERNAME_WPA2, WLAN_PASSWORD_WPA2);
-    MyWiFi wifi(display, WLAN_SSID, WLAN_PASSWORD);
+    #ifdef WIFI_WITH_WPA2
+      MyWiFi wifi(display, WLAN_SSID_WPA2, WLAN_IDENTITY_WPA2, WLAN_USERNAME_WPA2, WLAN_PASSWORD_WPA2);
+    #else
+      MyWiFi wifi(display, WLAN_SSID, WLAN_PASSWORD);
+    #endif
     wifi.connect();
     wifi_is_connected = true;
   }
