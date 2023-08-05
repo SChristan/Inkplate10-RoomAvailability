@@ -1,11 +1,27 @@
+/**********************************************************
+* Private Includes
+**********************************************************/
 #include "webuntis.h"
 #include <HTTPClient.h>
 
+/**********************************************************
+* Class Constructors
+**********************************************************/
 WebUntis::WebUntis(Inkplate& display, uint16_t room_id)
   : display_{ display },
     room_id_{ room_id } {
 }
 
+/*********************************************************/
+
+/** @brief Loading data from WebUntis for the specified room.
+ *
+ *  @param date_year Year of the date.
+ *  @param date_month Month of the date.
+ *  @param date_day Day of the date.
+ *
+ *  @return WebUntis data as DynamicJsonDocument.
+ */
 DynamicJsonDocument WebUntis::getData(uint16_t date_year, uint8_t date_month, uint8_t date_day) {
   DynamicJsonDocument doc(65536);
   HTTPClient http;

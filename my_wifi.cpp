@@ -1,8 +1,14 @@
+/**********************************************************
+* Private Includes
+**********************************************************/
 #include "my_wifi.h"
 #include <WiFi.h>
 #include <esp_wpa2.h>
 #include <stdint.h>
 
+/**********************************************************
+* Class Constructors
+**********************************************************/
 MyWiFi::MyWiFi(Inkplate& display, char* wlan_ssid, char* wlan_identity, char* wlan_username, char* wlan_password)
   : display_{ display },
     wlan_with_wpa2_{ true },
@@ -23,6 +29,10 @@ MyWiFi::MyWiFi(Inkplate& display, char* wlan_ssid, char* wlan_password)
     text_size_{ 3 } {
 }
 
+/*********************************************************/
+
+/**  @brief Connecting to the specified WiFi network.
+ */
 void MyWiFi::connect() {
   display_.setTextSize(text_size_);
   display_.setCursor(0, 0);
@@ -46,6 +56,10 @@ void MyWiFi::connect() {
   display_.partialUpdate();
 }
 
+/*********************************************************/
+
+/** @brief Searching for WiFi networks and printing them on the display.
+ */
 void MyWiFi::searchNetworks() {
   display_.setTextSize(text_size_);
   display_.setCursor(0, 0);

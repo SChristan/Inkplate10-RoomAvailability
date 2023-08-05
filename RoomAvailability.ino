@@ -1,7 +1,13 @@
+/**********************************************************
+* Control of the board selection
+**********************************************************/
 #ifndef ARDUINO_INKPLATE10
 #error "Wrong board selected, please select Inkplate 10 in the boards menu."
 #endif
 
+/**********************************************************
+* Private Includes
+**********************************************************/
 #include <Inkplate.h>
 #include <ArduinoJson.h>
 #include "my_wifi.h"
@@ -9,27 +15,36 @@
 #include "timetable.h"
 #include "wlan_credentials.h"
 
-#define TIME_TO_RELEASE_TOUCHPAD 1  // Time ESP32 will go to sleep before resetting to current week after Touchpad action (in seconds)
+/**********************************************************
+* Global definitions
+**********************************************************/
+#define TIME_TO_RELEASE_TOUCHPAD 1        // Time ESP32 will go to sleep before resetting to current week after Touchpad action (in seconds)
 
-Inkplate display(INKPLATE_1BIT);
+Inkplate display(INKPLATE_1BIT);          // Set the bit space for the color of the display
 
-RTC_DATA_ATTR int8_t week_offset = 0;
+RTC_DATA_ATTR int8_t week_offset = 0;     // The offset of the week shown on the display and the current week
+
+/*********************************************************/
 
 void setup() {
   Serial.begin(115200);
+  // Initialize the display
   display.begin();
 
+  // Initialize the Touchpads
   prepareDisplayPins();
 
-  time_t timetable_time = display.rtcGetEpoch() + week_offset * time_t(7 * 24 * 60 * 60);
-  bool today_is_set = true;
-  esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
+  time_t timetable_time = display.rtcGetEpoch() + week_offset * time_t(7 * 24 * 60 * 60);     // Time of the week which is shown in the timetable
+  bool today_is_set = true;                                                                   // Indicates if the current week is shown on the display
+  esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();                      // Contains the wakeup reason of the ESP32
 
+  // Check if the ESP32 woke up by the touchpads, otherwise load the current week
   if (wakeup_reason == ESP_SLEEP_WAKEUP_EXT1) {
-    // Check the touchpads 10 times with a short delay in beetween
+    // Check the touchpads 200 times with a short delay in beetween
     bool touchpad_pressed = false;
+    // 200 iterations to get a small time period to switch between differnt weeks
     for (uint8_t i = 0; i < 200; i++) {
-      // Check if the first touchpad has been touched.
+      // Check if the first touchpad has been touched. Load the previous week.
       if (display.readTouchpad(PAD1)) {
         Serial.println("Pressed Touchpad 1!");
         week_offset--;
@@ -37,7 +52,7 @@ void setup() {
         touchpad_pressed = true;
         today_is_set = false;
       }
-      // Check if the second touchpad has been touched.
+      // Check if the second touchpad has been touched. Load the current week.
       else if (display.readTouchpad(PAD2)) {
         Serial.println("Pressed Touchpad 2!");
         week_offset = 0;
@@ -45,7 +60,7 @@ void setup() {
         touchpad_pressed = true;
         today_is_set = true;
       }
-      // Check if the third touchpad has been touched.
+      // Check if the third touchpad has been touched. Load the following week.
       else if (display.readTouchpad(PAD3)) {
         Serial.println("Pressed Touchpad 3!");
         week_offset++;
@@ -53,12 +68,14 @@ void setup() {
         touchpad_pressed = true;
         today_is_set = false;
       }
-      // If a touchpad has been pressed, wait a short time for the user to release the touchpad.
+      // Check if a touchpad has been pressed, otherwise wait a short amount of time.
       if (touchpad_pressed) {
+        // Refresh the timetable and the display.
         performUpdate(timetable_time);
         Serial.println("Display was refreshed, time to release touchpads...");
+        // Wait a short time for the user to release the touchpad.
         delay(TIME_TO_RELEASE_TOUCHPAD * 1000);
-        // Clear the touchpads
+        // Clear the touchpads' input
         display.readTouchpad(PAD1);
         display.readTouchpad(PAD2);
         display.readTouchpad(PAD3);
@@ -74,6 +91,7 @@ void setup() {
     performUpdate(timetable_time);
   }
 
+  // Check if the current week is shown on the display
   if (today_is_set) {
     uint64_t hour_difference = hoursUntilWakeUp(1);
     // Go to deep sleep for the specified period of time
@@ -94,6 +112,12 @@ void loop() {
   // no code, because of low power mode
 }
 
+/*********************************************************/
+
+/**  @brief Calculating the difference to the specified hour.
+ *
+ *   @return Calculated difference in hours.
+ */
 uint8_t hoursUntilWakeUp(uint8_t required_hour) {
   display.rtcGetRtcData();
   if (display.rtcGetHour() == required_hour) {
@@ -105,6 +129,10 @@ uint8_t hoursUntilWakeUp(uint8_t required_hour) {
   }
 }
 
+/*********************************************************/
+
+/**  @brief Initializing the specified display pins: Touchpads
+ */
 void prepareDisplayPins() {
   display.setIntOutput(1, false, false, HIGH, IO_INT_ADDR);
   display.setIntPin(PAD1, RISING, IO_INT_ADDR);
@@ -112,19 +140,26 @@ void prepareDisplayPins() {
   display.setIntPin(PAD3, RISING, IO_INT_ADDR);
 }
 
+/*********************************************************/
+
+/**  @brief Displays the timetable of the specified week with the current data from WebUntis.
+ */
 void performUpdate(time_t time_epoch) {
   static bool wifi_is_connected = false;
   if (!wifi_is_connected) {
     display.clearDisplay();
-    MyWiFi wifi(display, WLAN_SSID_WPA2, WLAN_IDENTITY_WPA2, WLAN_USERNAME_WPA2, WLAN_PASSWORD_WPA2);
-    //MyWiFi wifi(display, WLAN_SSID, WLAN_PASSWORD);
+    // Creating the MyWiFi object with or without WPA2.
+    //MyWiFi wifi(display, WLAN_SSID_WPA2, WLAN_IDENTITY_WPA2, WLAN_USERNAME_WPA2, WLAN_PASSWORD_WPA2);
+    MyWiFi wifi(display, WLAN_SSID, WLAN_PASSWORD);
     wifi.connect();
     wifi_is_connected = true;
   }
   display.clearDisplay();
 
-  Timetable timetable(display, 460, time_epoch);  //  S-132 = 663 | S101 = 457 | S103 = 460
+  // Creating the Timetable object for the specified room ID and the specified time.
+  Timetable timetable(display, 460, time_epoch);  //  Room IDs: S-132 = 663 | S101 = 457 | S103 = 460
   bool data_loaded_successfully = timetable.drawData();
+  // Check if the data from WebUntis were loaded successfully
   if (!data_loaded_successfully) {
     display.clearDisplay();
     display.setTextSize(2);

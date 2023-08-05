@@ -1,9 +1,17 @@
+/**********************************************************
+* Include Guard
+**********************************************************/
 #ifndef OTH_LOGO_H_
 #define OTH_LOGO_H_
 
+/**********************************************************
+* Public Variables
+**********************************************************/
+// Size of the OTH logo
 const uint16_t oth_logo_width = 310;
 const uint8_t oth_logo_height = 56;
 
+// OTH logo as byte array
 const uint8_t oth_logo[] = {
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
