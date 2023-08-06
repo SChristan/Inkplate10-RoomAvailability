@@ -10,10 +10,10 @@
 **********************************************************/
 #include <Inkplate.h>
 #include <ArduinoJson.h>
-#include "my_wifi.h"
-#include "webuntis.h"
-#include "timetable.h"
-#include "wlan_credentials.h"
+#include "src/my_wifi/my_wifi.h"
+#include "src/webuntis/webuntis.h"
+#include "src/timetable/timetable.h"
+#include "src/inc/wlan_credentials.h"
 
 /**********************************************************
 * Global definitions

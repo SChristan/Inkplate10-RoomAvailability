@@ -2,8 +2,8 @@
 * Private Includes
 **********************************************************/
 #include "timetable.h"
-#include "oth_logo.h"
-#include "webuntis.h"
+#include "../inc/oth_logo.h"
+#include "../webuntis/webuntis.h"
 #include <string.h>
 
 /**********************************************************

@@ -1,6 +1,12 @@
+/**********************************************************
+* Include Guard
+**********************************************************/
 #ifndef WLAN_CREDENTIALS_H_
 #define WLAN_CREDENTIALS_H_
 
+/**********************************************************
+* Public Variables
+**********************************************************/
 // WiFi credentials without WPA2
 char* WLAN_SSID = "SSID";
 char* WLAN_PASSWORD = "PASSWORD";
