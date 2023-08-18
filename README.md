@@ -3,4 +3,4 @@ Dieses Git Repository gehört zum Projekt **Automatisierung eines Raumbelegungsp
 
 Das Ziel dieses Projekts war die Umsetzung eines automatisierten elektronischen Raumbelegungsplan, um den Aufwand eines mit Stift und Papier gepflegten Raumbelegungsplan zu minimieren und die in Anspruch nehmende Zeit produktiver nutzen zu können. Dieser soll die Nutzungszeiten eines spezifischen Raums aus WebUntis tagesaktuell auslesen und auf einem Display darstellen.
 
-Weitere Informationen befinden sich auf der [Projektseite](https://ei-wiki.oth-regensburg.de/wiki/submit/Automatisierung_eines_Raumbelegungsplans_mithilfe_eines_E-Paper_Displays) im EI-Wiki.
+Weitere Informationen befinden sich auf der [Projektseite](https://ei-wiki.oth-regensburg.de/wiki/Automatisierung_eines_Raumbelegungsplans_mithilfe_eines_E-Paper_Displays) im EI-Wiki.
